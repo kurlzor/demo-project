@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  namespace: demo-project
+  name: demo-project
+spec:
+  rules:
+  - host: demo-project.intraneos.com
+    http:
+      paths:
+      - backend:
+          serviceName: demo-project
+          servicePort: 80

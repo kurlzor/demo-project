@@ -1,16 +1,28 @@
+resource_types:
+- name: kubernetes
+  type: docker-image
+  source:
+    repository: zlabjp/kubernetes-resource
+    tag: "1.9"
+
 resources:
 - name: demo-project
   type: git
+  webhook_token: 573C9076AFA74928AFDAB4FE9E20E6AF
   source:
     uri: https://github.com/Evaneos/demo-project.git
     branch: master
+- name: intraneos-cluster
+  type: kubernetes
+  source:
+    kubeconfig: ((kubeconfig))
 
 jobs:
-- name: unit-tests
+- name: deploy-on-success
   plan:
   - get: demo-project
     trigger: true
-  - task: phpunit
+  - task: unit-tests
     config:
       platform: linux
       image_resource:
@@ -29,3 +41,6 @@ jobs:
           cd ./demo-project
           composer install
           ./vendor/bin/phpunit test
+  - put: intraneos-cluster
+    params:
+      kubectl: apply -f demo-project/infra

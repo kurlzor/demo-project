@@ -7,4 +7,8 @@ $app->get('/hello/{name}', function($name) use($app) {
     return 'Hello '.$app->escape($name);
 });
 
+$app->get('/ping', function($name) use($app) {
+    return 'pong';
+});
+
 $app->run();

@@ -1,12 +1,31 @@
-jobs:
+resources:
 - name: demo-project
+  type: git
+  source:
+    uri: https://github.com/Evaneos/demo-project.git
+    branch: master
+
+jobs:
+- name: unit-tests
   plan:
-  - task: say-hello
+  - get: demo-project
+    trigger: true
+  - task: phpunit
     config:
       platform: linux
       image_resource:
         type: docker-image
-        source: {repository: alpine}
+        source: {repository: php, tag: 7.2.1-alpine}
+      inputs:
+      - name: demo-project
       run:
-        path: echo
-        args: ["Hello, world!"]
+        path: sh
+        args:
+        - -exc
+        - |
+          curl -L -o /usr/local/bin/composer https://getcomposer.org/composer.phar
+          chmod +x /usr/local/bin/composer
+          composer global require hirak/prestissimo
+          cd ./demo-project
+          composer install
+          ./vendor/bin/phpunit test

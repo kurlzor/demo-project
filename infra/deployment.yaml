@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  namespace: demo-project
+  name: api
+  labels:
+    app: demo-project-api
+spec:
+  template:
+    metadata:
+      labels:
+        app: demo-project-api
+    spec:
+      containers:
+      - name: php
+        image: evaneos/demo-project
+        ports:
+          - name: http
+            containerPort: 80

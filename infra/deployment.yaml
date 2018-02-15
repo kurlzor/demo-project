@@ -16,7 +16,7 @@ spec:
       containers:
       - name: php
         image: evaneos/demo-project
-        imagePullPolicy: always
+        imagePullPolicy: Always
         ports:
           - name: http
             containerPort: 80

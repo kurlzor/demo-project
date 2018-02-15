@@ -16,7 +16,7 @@ resources:
   type: docker-image
   source:
     repository: evaneos/demo-project
-    username: ((docker-hub-login))
+    username: ((docker-hub-username))
     password: ((docker-hub-password))
 
 - name: intraneos-cluster

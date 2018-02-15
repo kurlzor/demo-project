@@ -11,6 +11,7 @@ spec:
       labels:
         app: demo-project-api
     spec:
+      imagePullSecrets: docker-hub
       containers:
       - name: php
         image: evaneos/demo-project

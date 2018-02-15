@@ -12,6 +12,13 @@ resources:
   source:
     uri: https://github.com/Evaneos/demo-project.git
     branch: master
+- name: demo-project-docker-image
+  type: docker-image
+  source:
+    repository: evaneos/demo-project
+    username: ((docker-hub-login))
+    password: ((docker-hub-password))
+
 - name: intraneos-cluster
   type: kubernetes
   source:
@@ -41,6 +48,8 @@ jobs:
           cd ./demo-project
           composer install
           ./vendor/bin/phpunit test
+  - put: demo-project-docker-image
+    params: {build: demo-project}
   - put: intraneos-cluster
     params:
       kubectl: apply -f demo-project/infra

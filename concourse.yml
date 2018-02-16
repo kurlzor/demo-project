@@ -4,6 +4,10 @@ resource_types:
   source:
     repository: zlabjp/kubernetes-resource
     tag: "1.9"
+- name: pull-request
+  type: docker-image
+  source:
+    repository: jtarchie/pr
 
 resources:
 - name: demo-project
@@ -12,6 +16,12 @@ resources:
   source:
     uri: https://github.com/Evaneos/demo-project.git
     branch: master
+- name: demo-project-pr
+  type: pull-request
+  source:
+    access_token: 573C9076AFA74928AFDAB4FE9E20E6AF
+    repo: Evaneos/demo-project
+    base: master
 - name: demo-project-docker-image
   type: docker-image
   source:
@@ -25,6 +35,29 @@ resources:
     kubeconfig: ((kubeconfig))
 
 jobs:
+- name: test-pr
+  plan:
+    - get: demo-project-pr
+      trigger: true
+    - task: unit-tests
+      config:
+        platform: linux
+        image_resource:
+          type: docker-image
+          source: {repository: php, tag: 7.2.1-alpine}
+        inputs:
+        - name: demo-project
+        run:
+          path: sh
+          args:
+          - -exc
+          - |
+            curl -L -o /usr/local/bin/composer https://getcomposer.org/composer.phar
+            chmod +x /usr/local/bin/composer
+            composer global require hirak/prestissimo
+            cd ./demo-project
+            composer install
+            ./vendor/bin/phpunit test
 - name: unit-tests
   plan:
   - get: demo-project

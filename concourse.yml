@@ -25,7 +25,7 @@ resources:
     kubeconfig: ((kubeconfig))
 
 jobs:
-- name: deploy-on-success
+- name: unit-tests
   plan:
   - get: demo-project
     trigger: true
@@ -48,8 +48,22 @@ jobs:
           cd ./demo-project
           composer install
           ./vendor/bin/phpunit test
+
+- name: build-docker-image
+  plan:
+  - get: demo-project
+    passed:
+    - unit-tests
+    trigger: true
   - put: demo-project-docker-image
     params: {build: demo-project}
-  - put: intraneos-cluster
-    params:
-      kubectl: apply -f demo-project/infra
+
+- name: deploy
+  plan:
+    - get: demo-project-docker-image
+      passed:
+      - build-docker-image
+      trigger: true
+    - put: intraneos-cluster
+      params:
+        kubectl: apply -f demo-project/infra

@@ -1,4 +1,7 @@
 <?php
+
+use DemoProject\RandomClass;
+
 require_once __DIR__.'/vendor/autoload.php';
 
 $app = new Silex\Application();
@@ -17,6 +20,10 @@ $app->get('/hello/{name}', function($name) use($app) {
 
 $app->get('/ping', function() {
     return 'pong';
+});
+
+$app->get('/random', function() {
+    return (new RandomClass())->return5();
 });
 
 $app->run();
